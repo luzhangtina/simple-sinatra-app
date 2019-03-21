@@ -17,18 +17,40 @@ Provide documentation:
 
 
 ### To Run Locally
-git clone git@github.com:rea-cruitment/simple-sinatra-app.git
-shell $ bundle install
-shell $ bundle exec rackup -o 0.0.0.0  -p 8080 
+git clone git@github.com:luzhangtina/simple-sinatra-app.git
+$ `./run-local.sh`
+Use browser or $ `curl -i 127.0.0.1:8080`
 
 ### To Build and Run Using Docker
 Install Docker 18.09.2
 $ `docker build -t simple-sinatra-app .`
-$ `docker run -p 80:9291 simple-sinatra-app`
+$ `docker run -p 8080:9292 simple-sinatra-app`
+Use browser or $ `curl -i 127.0.0.1:8080`
 
-### Solution 1: Using traditional AMI + EC2  based deployment
+### Solution 1: Using Docker + Fargate
 
-### Solution 2: Using Docker + Fargate
+#### Create ECR Repo
+Install AWS CLI (for mac brew install awscli)
+Create and Run Cloudformation Template
+aws cloudformation create-stack \
+    --region ap-southeast-2 \
+    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/ecr.yml \
+    --stack-name simple-sinatra-app-ecr-repo \
+    --capabilities CAPABILITY_IAM \
+    --parameters \
+        ParameterKey=RepositoryName,ParameterValue='simple-sinatra-app-ecr-repo' \
+        ParameterKey=AccountARNs,ParameterValue='arn:aws:iam::047371262158:root'
+        
+
+#### Build Image and Push Image to ECR
+$ `docker build -t simple-sinatra-app .`
+$ `docker tag simple-sinatra-app:latest 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
+$ Set Credentials or Session Keys(aws configure)
+$ `$(aws ecr get-login --no-include-email --region ap-southeast-2)`
+$ `docker push 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
+
+### Solution 2: Using traditional AMI + EC2  based deployment
+
 
 ### Solution 1: Elastic Beanstalk - Cloudformation
 
