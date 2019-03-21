@@ -24,7 +24,7 @@ Use browser or $ `curl -i 127.0.0.1:8080`
 ### To Build and Run Using Docker
 Install Docker 18.09.2
 $ `docker build -t simple-sinatra-app .`
-$ `docker run -p 8080:9292 simple-sinatra-app`
+$ `docker run -p 8080:80 simple-sinatra-app`
 Use browser or $ `curl -i 127.0.0.1:8080`
 
 ### Solution 1: Using Docker + Fargate
