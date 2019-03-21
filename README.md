@@ -32,14 +32,14 @@ Use browser or $ `curl -i 127.0.0.1:8080`
 #### Create ECR Repo
 Install AWS CLI (for mac brew install awscli)
 Create and Run Cloudformation Template
-aws cloudformation create-stack \
+$ `aws cloudformation create-stack \
     --region ap-southeast-2 \
     --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/ecr.yml \
     --stack-name simple-sinatra-app-ecr-repo \
     --capabilities CAPABILITY_IAM \
     --parameters \
         ParameterKey=RepositoryName,ParameterValue='simple-sinatra-app-ecr-repo' \
-        ParameterKey=AccountARNs,ParameterValue='arn:aws:iam::047371262158:root'
+        ParameterKey=AccountARNs,ParameterValue='arn:aws:iam::047371262158:root'`
         
 
 #### Build Image and Push Image to ECR
@@ -48,6 +48,20 @@ $ `docker tag simple-sinatra-app:latest 047371262158.dkr.ecr.ap-southeast-2.amaz
 $ Set Credentials or Session Keys(aws configure)
 $ `$(aws ecr get-login --no-include-email --region ap-southeast-2)`
 $ `docker push 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
+
+#### Create Public VPC
+$ `aws cloudformation create-stack   \
+    --region ap-southeast-2    \
+    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/public-vpc.yml    \
+    --stack-name public-vpc     \
+    --capabilities CAPABILITY_IAM `
+
+#### Deploy Using Fargate
+$ `aws cloudformation create-stack \
+    --region ap-southeast-2 \
+    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/public-subnet-public-loadbalancer.yml \
+    --stack-name simple-sinatra-app-on-fargate \
+    --capabilities CAPABILITY_IAM `
 
 ### Solution 2: Using traditional AMI + EC2  based deployment
 
