@@ -53,20 +53,14 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Access to the Fargate containers
-      VpcId: !ImportValue
-        'Fn::Join':
-          - ':'
-          - - !Ref StackName
-            - VPCId
+      VpcId:
+        Fn::ImportValue: !Sub '${StackName}:VPCId'
   PublicLoadBalancerSG:
       Type: 'AWS::EC2::SecurityGroup'
       Properties:
         GroupDescription: Access to the public facing load balancer
-        VpcId: !ImportValue
-          'Fn::Join':
-            - ':'
-            - - !Ref StackName
-              - VPCId
+        VpcId:
+          Fn::ImportValue: !Sub '${StackName}:VPCId'
         SecurityGroupIngress:
           - CidrIp: 0.0.0.0/0
             IpProtocol: -1
