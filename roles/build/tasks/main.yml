@@ -1,0 +1,24 @@
+---
+  - name: Create a new ECR repo
+    cloudformation:
+      stack_name: "{{application}}-{{env}}-ecr"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/ecr.yml"
+      stack_policy: "cloudformation/allow_update_policy.json"
+      template_parameters:
+        RepositoryName: "{{application}}-{{env}}"
+        AccountARNs: "arn:aws:iam::{{account_id}}:root"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"
+        environment: "{{env}}"
+
+
+  - name: Create simple-sinatra-app docker image and upload to ECR
+    docker_image:
+      path: ./
+      name: "{{account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/{{application}}-{{env}}"
+      tag: "{{build_version}}"
+      push: yes

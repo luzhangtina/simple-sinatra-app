@@ -1,0 +1,11 @@
+[build]
+build
+
+[build:vars]
+build_version={{build_and_deploy_version}}
+
+[deploy]
+deploy
+
+[deploy:vars]
+deploy_version={{build_and_deploy_version}}

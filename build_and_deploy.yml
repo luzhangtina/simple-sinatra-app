@@ -1,0 +1,12 @@
+---
+- hosts: build
+  connection: local
+  gather_facts: False
+  roles:
+    - build
+
+- hosts: deploy
+  connection: local
+  gather_facts: False
+  roles:
+    - deploy

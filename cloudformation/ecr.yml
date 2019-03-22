@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: ECR Stack
 Parameters:
   RepositoryName:
-    Description: repository name of the ECR
+    Description: "Repository name of the ECR"
     Type: String
   AccountARNs:
     Description: "Comma-delimited list of AWS Account number that is allowed to access the repository"

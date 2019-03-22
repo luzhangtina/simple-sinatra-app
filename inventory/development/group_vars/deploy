@@ -1,0 +1,12 @@
+vpc_cidr: 10.0.0.0/21
+public_subnet_one_cidr: 10.0.0.0/23
+public_subnet_two_cidr: 10.0.2.0/23
+public_subnet_three_cidr: 10.0.4.0/23
+public_subnet_four_cidr: 10.0.6.0/23
+container_port: 80
+container_cpu: 256
+container_memory: 512
+alb_path: "*"
+priority: 1
+desired_count: 1
+role: ""

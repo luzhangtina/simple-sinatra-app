@@ -14,15 +14,26 @@ Provide documentation:
   - Instructions for the reviewer which explain how your code should be executed
   - Requirements for running. (AWS account? Base images? Other tooling pre-installed?)
   - Explanation of assumptions and design choices.
-
-
-### To Run Locally
+ 
+## Running Application directly on local environment
   - git clone git@github.com:luzhangtina/simple-sinatra-app.git
   - $ `./run-local.sh`
   - Use browser or $ `curl -i 127.0.0.1:8080`
 
+## Installing Dependencies for using Python Virtual Env and Ansible
+ - Install Docker 18.09.2(Download and Install https://download.docker.com/)
+ - Install Python 3.7: https://www.python.org/downloads/release/python-372/
+ - Install Virtual Env: `python3.7 -m pip install --user virtualenv`
+ - Create Python Virtual Env: `python3.7 -m virtualenv env`
+ - Activate Python Virtual Env: `source env/bin/activate`
+ - Install Ansible and Dependencies: `pip install ansible boto3 botocore awscli docker-py`
+ - set aws credentials: `source <creds-file>`
+
+## Deploying Application Components on AWS
+ - Create ECR, Build Application Container, Upload to ECR: `ansible-playbook ecr.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"`
+ - Deploy Application using Fargate: 
+
 ### To Build and Run Using Docker
-  - Install Docker 18.09.2
   - $ `docker build -t simple-sinatra-app .`
   - $ `docker run -p 8080:80 simple-sinatra-app`
   - Use browser or $ `curl -i 127.0.0.1:8080`

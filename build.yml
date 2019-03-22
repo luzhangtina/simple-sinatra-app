@@ -1,0 +1,6 @@
+---
+- hosts: build
+  connection: local
+  gather_facts: False
+  roles:
+    - build

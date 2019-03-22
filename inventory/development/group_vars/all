@@ -1,0 +1,7 @@
+---
+env: dev
+aws_region: ap-southeast-2
+project: rea-assignment
+account_id: 047371262158
+application: rea
+build_and_deploy_version: 2

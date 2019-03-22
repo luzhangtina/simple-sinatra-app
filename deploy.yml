@@ -1,0 +1,6 @@
+---
+- hosts: deploy
+  connection: local
+  gather_facts: False
+  roles:
+    - deploy

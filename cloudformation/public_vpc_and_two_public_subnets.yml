@@ -2,24 +2,23 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >
         This stack builds a VPC with a pair of public spread across two Availability Zones.
         It deploys an Internet Gateway, with a default route on the public subnets.
-Mappings:
-  SubnetConfig:
-    VPC:
-      CIDR: 10.0.0.0/16
-    PublicOne:
-      CIDR: 10.0.0.0/24
-    PublicTwo:
-      CIDR: 10.0.1.0/24
+Parameters:
+  VPCCIDR:
+    Description: "VPC CIDR"
+    Type: String
+  PublicSubnetOneCIDR:
+    Description: "Subnet One CIDR"
+    Type: String
+  PublicSubnetTwoCIDR:
+    Description: "Subnet Two CIDR"
+    Type: String
 Resources:
   VPC:
     Type: 'AWS::EC2::VPC'
     Properties:
       EnableDnsSupport: true
       EnableDnsHostnames: true
-      CidrBlock: !FindInMap
-        - SubnetConfig
-        - VPC
-        - CIDR
+      CidrBlock: !Ref VPCCIDR
       Tags:
         - Key: Name
           Value: simple-sinatra-app-vpc
@@ -31,10 +30,7 @@ Resources:
         - !GetAZs
           Ref: 'AWS::Region'
       VpcId: !Ref VPC
-      CidrBlock: !FindInMap
-        - SubnetConfig
-        - PublicOne
-        - CIDR
+      CidrBlock: !Ref PublicSubnetOneCIDR
       Tags:
         - Key: Name
           Value: simple-sinatra-app-public-subnet-one
@@ -47,10 +43,7 @@ Resources:
         - !GetAZs
           Ref: 'AWS::Region'
       VpcId: !Ref VPC
-      CidrBlock: !FindInMap
-        - SubnetConfig
-        - PublicTwo
-        - CIDR
+      CidrBlock: !Ref PublicSubnetTwoCIDR
       Tags:
         - Key: Name
           Value: simple-sinatra-app-public-subnet-two
