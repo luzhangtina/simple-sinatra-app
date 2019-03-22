@@ -50,17 +50,17 @@ Provide documentation:
   - $ `docker push 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
 
 #### Create Public VPC
-  - $ `aws cloudformation create-stack   \
-    --region ap-southeast-2    \
-    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/public-vpc.yml    \
-    --stack-name public-vpc     \
+  - $ `aws cloudformation create-stack \
+    --region ap-southeast-2 \
+    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/public-vpc-two-subnet.yml \
+    --stack-name simple-sinatra-app-vpc \
     --capabilities CAPABILITY_IAM `
 
 #### Deploy Using Fargate
   - $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
-    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/public-subnet-public-loadbalancer.yml \
-    --stack-name simple-sinatra-app-on-fargate \
+    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/deploy/fargate.yml \
+    --stack-name ssa-on-fargate \
     --capabilities CAPABILITY_IAM `
 
 ### Solution 2: Using traditional AMI + EC2  based deployment

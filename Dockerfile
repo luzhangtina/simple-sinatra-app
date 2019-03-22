@@ -1,4 +1,4 @@
-FROM ruby:2.6.2
+FROM ruby:2.6.2-alpine
 WORKDIR /opt/app
 COPY app .
 RUN bundle install
