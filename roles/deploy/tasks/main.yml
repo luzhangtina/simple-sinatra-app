@@ -11,11 +11,15 @@
         VPCCIDR: "{{vpc_cidr}}"
         PublicSubnetOneCIDR: "{{public_subnet_one_cidr}}"
         PublicSubnetTwoCIDR: "{{public_subnet_two_cidr}}"
+        VPCName: "{{vpc_name}}"
+        PublicSubnetOneName: "{{public_subnet_one_name}}"
+        PublicSubnetTwoName: "{{public_subnet_two_name}}"
+        InternetGatewayName: "{{internet_gateway_name}}"
+        PublicRouteTableName: "{{public_route_table_name}}"
       tags:
         project: "{{project}}"
         application: "{{application}}"
         environment: "{{env}}"
-
   - name: Deploy using fargate
     cloudformation:
       stack_name: "{{application}}-{{env}}-fargate"

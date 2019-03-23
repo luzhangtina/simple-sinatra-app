@@ -9,3 +9,8 @@ deploy
 
 [deploy:vars]
 deploy_version={{build_and_deploy_version}}
+vpc_name="{{application}}-{{env}}-vpc"
+public_subnet_one_name="{{application}}-{{env}}-public-subnet-one"
+public_subnet_two_name="{{application}}-{{env}}-public-subnet-two"
+internet_gateway_name="{{application}}-{{env}}-internet-gateway"
+public_route_table_name="{{application}}-{{env}}-public-route-table"

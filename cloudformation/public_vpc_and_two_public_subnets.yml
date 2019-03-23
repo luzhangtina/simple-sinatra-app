@@ -12,6 +12,21 @@ Parameters:
   PublicSubnetTwoCIDR:
     Description: "Subnet Two CIDR"
     Type: String
+  VPCName:
+    Description: "The name of VPC"
+    Type: String
+  PublicSubnetOneName:
+    Description: "The name of public subnet one"
+    Type: String
+  PublicSubnetTwoName:
+    Description: "The name of public subnet two"
+    Type: String
+  InternetGatewayName:
+    Description: "The name of internet gateway"
+    Type: String
+  PublicRouteTableName:
+    Description: "The name of public route table"
+    Type: String
 Resources:
   VPC:
     Type: 'AWS::EC2::VPC'
@@ -21,7 +36,7 @@ Resources:
       CidrBlock: !Ref VPCCIDR
       Tags:
         - Key: Name
-          Value: simple-sinatra-app-vpc
+          Value: !Ref VPCName
   PublicSubnetOne:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -33,7 +48,7 @@ Resources:
       CidrBlock: !Ref PublicSubnetOneCIDR
       Tags:
         - Key: Name
-          Value: simple-sinatra-app-public-subnet-one
+          Value: !Ref PublicSubnetOneName
       MapPublicIpOnLaunch: true
   PublicSubnetTwo:
     Type: 'AWS::EC2::Subnet'
@@ -46,14 +61,14 @@ Resources:
       CidrBlock: !Ref PublicSubnetTwoCIDR
       Tags:
         - Key: Name
-          Value: simple-sinatra-app-public-subnet-two
+          Value: !Ref PublicSubnetTwoName
       MapPublicIpOnLaunch: true
   InternetGateway:
     Type: 'AWS::EC2::InternetGateway'
     Properties:
       Tags:
         - Key: Name
-          Value: simple-sinatra-app-internetgateway
+          Value: !Ref InternetGatewayName
   GatewayAttachement:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
@@ -65,7 +80,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: simple-sinatra-app-public-routetable
+          Value: !Ref PublicRouteTableName
   PublicRoute:
     Type: 'AWS::EC2::Route'
     DependsOn: GatewayAttachement

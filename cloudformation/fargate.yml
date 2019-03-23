@@ -12,13 +12,13 @@ Parameters:
     Description: "The url of a docker image that contains the application process that will handle the traffic for this service"
   ContainerPort:
     Type: Number
-    Description: "What port number the application inside the docker container is binding to?"
+    Description: "The port number which the application inside the docker container is binding to"
   ContainerCpu:
     Type: Number
-    Description: "How much CPU to give the container. 1024 is 1 CPU"
+    Description: "The CPU to give the container. 1024 is 1 CPU"
   ContainerMemory:
     Type: Number
-    Description: "How much memory in megabytes to give the container?"
+    Description: "The memory in megabytes to give the container"
   ALBPath:
     Type: String
     Description: "A path on the public load balancer that this service should be connected to. Use * to send all load balancer traffic to this service"
@@ -27,7 +27,7 @@ Parameters:
     Description: "The priority for the routing rule added to the load balancer. This only applies if your have multiple services which have been assigned to different paths on the load balancer."
   DesiredCount:
     Type: Number
-    Description: "How many copies of the service task to run"
+    Description: "The number of the service task to run"
   Role:
     Type: String
     Description: "(Optional) An IAM role to give the service's containers if the code within needs to access other AWS resources like S3 buckets, DynamoDB tables, etc"
