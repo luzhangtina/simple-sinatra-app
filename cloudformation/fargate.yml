@@ -80,27 +80,13 @@ Resources:
         - Fn::ImportValue: !Sub '${VPCStackName}:PublicSubnetTwo'
       SecurityGroups:
         - !Ref PublicLoadBalancerSG
-  DummyTargetGroupPublic:
-    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
-    Properties:
-      HealthCheckIntervalSeconds: 6
-      HealthCheckPath: /
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
-      Name: !Ref 'AWS::StackName'
-      Port: 80
-      Protocol: HTTP
-      UnhealthyThresholdCount: 2
-      VpcId:
-        Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
   PublicLoadBalancerListener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     DependsOn:
       - PublicLoadBalancer
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref DummyTargetGroupPublic
+        - TargetGroupArn: !Ref TargetGroup
           Type: forward
       LoadBalancerArn: !Ref PublicLoadBalancer
       Port: 80

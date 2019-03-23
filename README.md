@@ -38,7 +38,7 @@ Provide documentation:
   - Create and run Cloudformation template
     $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
-    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/cloudformation/ecr.yml \
+    --template-body file://<project_path>/cloudformation/ecr.yml \
     --stack-name simple-sinatra-app-ecr-repo \
     --capabilities CAPABILITY_IAM \
     --parameters \
@@ -55,19 +55,19 @@ Provide documentation:
 ### Create Public VPC
   - $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
-    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/cloudformation/public-vpc-two-subnet.yml \
+    --template-body file://<project_path>/cloudformation/public-vpc-two-subnet.yml \
     --stack-name simple-sinatra-app-vpc \
     --capabilities CAPABILITY_IAM `
 
 ### Deploy Using Fargate
   - $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
-    --template-body file:///Users/tina/Projects/REAHomeWork/simple-sinatra-app/cloudformation/fargate.yml \
+    --template-body file://<project_path>/cloudformation/fargate.yml \
     --stack-name ssa-on-fargate \
     --capabilities CAPABILITY_IAM `
     
 ## Solution 2: Using Ansible + Docker + Fargate
-    
+
 ### Installing Dependencies for using Python Virtual Env and Ansible
  - Install Docker 18.09.2(Download and Install https://download.docker.com/)
  - Install Python 3.7: https://www.python.org/downloads/release/python-372/
@@ -76,15 +76,23 @@ Provide documentation:
  - Activate Python Virtual Env: `source env/bin/activate`
  - Install Ansible and Dependencies: `pip install ansible boto3 botocore awscli docker-py`
  - Set AWS Credentials: `source <creds-file>`
+ - Set AWS account_id in /inventory/development/group_vars/all
 
 ### Deploying Application Components on AWS
  - $(aws ecr get-login --no-include-email --region ap-southeast-2)
  - Create ECR, Build Application Container, Upload to ECR:  
- - $ `ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter='which python'"`
+   $ ``ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
  - Deploy Application using Fargate: 
- - $ `ansible-playbook deploy.yml -i inventory/development/ -e "ansible_python_interpreter='which python'"`
+   $ ``ansible-playbook deploy.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
+ - (Optional) Using one step operation to build and deploy Application using Fargate: 
+   $ ``ansible-playbook build_and_deploy.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
 
-## Solution 3: Using traditional AMI + EC2  based deployment
+### Price
+ - ECR: 
+   - Storage is $0.10 per GB-month
+   - All data transfer in: $0.00 per GB
+   - Data transfer out: Up to 1 GB / Month is $0.00 per GB
+ - Fargate: 
+   - Monthly Fargate compute charges = monthly CPU charges + monthly memory charges
 
-## Solution 4: Elastic Beanstalk - Cloudformation
 

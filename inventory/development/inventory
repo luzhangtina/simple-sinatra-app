@@ -1,11 +1,11 @@
 [build]
-build
+build_app
 
 [build:vars]
 build_version={{build_and_deploy_version}}
 
 [deploy]
-deploy
+deploy_app
 
 [deploy:vars]
 deploy_version={{build_and_deploy_version}}
