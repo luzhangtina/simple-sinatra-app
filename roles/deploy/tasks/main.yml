@@ -5,7 +5,7 @@
       state: present
       region: "{{aws_region}}"
       disable_rollback: true
-      template: "cloudformation/public_vpc_and_two_public_subnets.yml"
+      template: "cloudformation/vpc_and_two_public_subnets.yml"
       stack_policy: "cloudformation/allow_update_policy.json"
       template_parameters:
         VPCCIDR: "{{vpc_cidr}}"

@@ -30,7 +30,7 @@ Parameters:
     Description: "The number of the service task to run"
   Role:
     Type: String
-    Description: "(Optional) An IAM role to give the service's containers if the code within needs to access other AWS resources like S3 buckets, DynamoDB tables, etc"
+    Description: "An IAM role to give the service's containers if the code within needs to access other AWS resources like S3 buckets, DynamoDB tables, etc"
 Conditions:
   HasCustomRole: !Not
     - !Equals
@@ -42,13 +42,13 @@ Resources:
   FargateContainerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Access to the Fargate containers
+      GroupDescription: "Access to the Fargate containers"
       VpcId:
         Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
   PublicLoadBalancerSG:
       Type: 'AWS::EC2::SecurityGroup'
       Properties:
-        GroupDescription: Access to the public facing load balancer
+        GroupDescription: "Access to the public facing load balancer"
         VpcId:
           Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
         SecurityGroupIngress:
@@ -57,14 +57,14 @@ Resources:
   EcsSecurityGroupIngressFromPublicALB:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-      Description: Ingress from the public ALB
+      Description: "Ingress from the public ALB"
       GroupId: !Ref FargateContainerSecurityGroup
       IpProtocol: -1
       SourceSecurityGroupId: !Ref PublicLoadBalancerSG
   EcsSecurityGroupIngressFromSelf:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-      Description: Ingress from other containers in the same security group
+      Description: "Ingress from other containers in the same security group"
       GroupId: !Ref FargateContainerSecurityGroup
       IpProtocol: -1
       SourceSecurityGroupId: !Ref FargateContainerSecurityGroup
@@ -76,16 +76,8 @@ Resources:
         - Key: idle_timeout.timeout_seconds
           Value: '30'
       Subnets:
-        - !ImportValue
-            'Fn::Join':
-              - ':'
-              - - !Ref VPCStackName
-                - PublicSubnetOne
-        - !ImportValue
-            'Fn::Join':
-              - ':'
-              - - !Ref VPCStackName
-                - PublicSubnetTwo
+        - Fn::ImportValue: !Sub '${VPCStackName}:PublicSubnetOne'
+        - Fn::ImportValue: !Sub '${VPCStackName}:PublicSubnetTwo'
       SecurityGroups:
         - !Ref PublicLoadBalancerSG
   DummyTargetGroupPublic:
@@ -100,11 +92,8 @@ Resources:
       Port: 80
       Protocol: HTTP
       UnhealthyThresholdCount: 2
-      VpcId: !ImportValue
-        'Fn::Join':
-          - ':'
-          - - !Ref VPCStackName
-            - VPCId
+      VpcId:
+        Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
   PublicLoadBalancerListener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     DependsOn:
@@ -116,37 +105,6 @@ Resources:
       LoadBalancerArn: !Ref PublicLoadBalancer
       Port: 80
       Protocol: HTTP
-  ECSRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ecs.amazonaws.com
-            Action:
-              - 'sts:AssumeRole'
-      Path: /
-      Policies:
-        - PolicyName: ecs-service
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'ec2:AttachNetworkInterface'
-                  - 'ec2:CreateNetworkInterface'
-                  - 'ec2:CreateNetworkInterfacePermission'
-                  - 'ec2:DeleteNetworkInterface'
-                  - 'ec2:DeleteNetworkInterfacePermission'
-                  - 'ec2:Describe*'
-                  - 'ec2:DetachNetworkInterface'
-                  - 'elasticloadbalancing:DeregisterInstancesFromLoadBalancer'
-                  - 'elasticloadbalancing:DeregisterTargets'
-                  - 'elasticloadbalancing:Describe*'
-                  - 'elasticloadbalancing:RegisterInstancesWithLoadBalancer'
-                  - 'elasticloadbalancing:RegisterTargets'
-                Resource: '*'
   ECSTaskExecutionRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -160,7 +118,7 @@ Resources:
               - 'sts:AssumeRole'
       Path: /
       Policies:
-        - PolicyName: AmazonECSTaskExecutionRolePolicy
+        - PolicyName: "AmazonECSTaskExecutionRolePolicy"
           PolicyDocument:
             Statement:
               - Effect: Allow
@@ -193,18 +151,6 @@ Resources:
           Image: !Ref ImageUrl
           PortMappings:
             - ContainerPort: !Ref ContainerPort
-  LoadBalancerRule:
-      Type: 'AWS::ElasticLoadBalancingV2::ListenerRule'
-      Properties:
-        Actions:
-          - TargetGroupArn: !Ref TargetGroup
-            Type: forward
-        Conditions:
-          - Field: path-pattern
-            Values:
-              - !Ref ALBPath
-        ListenerArn: !Ref PublicLoadBalancerListener
-        Priority: !Ref Priority
   TargetGroup:
       Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
       Properties:
@@ -218,11 +164,20 @@ Resources:
         Port: !Ref ContainerPort
         Protocol: HTTP
         UnhealthyThresholdCount: 2
-        VpcId: !ImportValue
-          'Fn::Join':
-            - ':'
-            - - !Ref VPCStackName
-              - VPCId
+        VpcId:
+          Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
+  LoadBalancerRule:
+    Type: 'AWS::ElasticLoadBalancingV2::ListenerRule'
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - !Ref ALBPath
+      ListenerArn: !Ref PublicLoadBalancerListener
+      Priority: !Ref Priority
   Service:
     Type: 'AWS::ECS::Service'
     DependsOn: LoadBalancerRule
@@ -232,7 +187,7 @@ Resources:
       LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
-        MinimumHealthyPercent: 75
+        MinimumHealthyPercent: 100
       DesiredCount: !Ref DesiredCount
       NetworkConfiguration:
         AwsvpcConfiguration:
@@ -240,16 +195,8 @@ Resources:
           SecurityGroups:
             - !Ref FargateContainerSecurityGroup
           Subnets:
-            - !ImportValue
-              'Fn::Join':
-                - ':'
-                - - !Ref VPCStackName
-                  - PublicSubnetOne
-            - !ImportValue
-              'Fn::Join':
-                - ':'
-                - - !Ref VPCStackName
-                  - PublicSubnetTwo
+            - Fn::ImportValue: !Sub '${VPCStackName}:PublicSubnetOne'
+            - Fn::ImportValue: !Sub '${VPCStackName}:PublicSubnetTwo'
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:
         - ContainerName: !Ref ServiceName

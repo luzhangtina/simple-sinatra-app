@@ -11,7 +11,7 @@ Resources:
   SimpleSinatraAppRepo:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: !Ref 'RepositoryName'
+      RepositoryName: !Ref RepositoryName
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -19,7 +19,7 @@ Resources:
             Sid: AllowPushPull
             Effect: Allow
             Principal:
-              AWS: !Ref 'AccountARNs'
+              AWS: !Ref AccountARNs
             Action:
               - "ecr:GetDownloadUrlForLayer"
               - "ecr:BatchGetImage"

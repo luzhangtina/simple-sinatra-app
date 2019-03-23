@@ -78,10 +78,11 @@ Provide documentation:
  - Set AWS Credentials: `source <creds-file>`
 
 ### Deploying Application Components on AWS
+ - $(aws ecr get-login --no-include-email --region ap-southeast-2)
  - Create ECR, Build Application Container, Upload to ECR:  
- - $ `ansible-playbook build.yml -i inventory/development/ -e ansible_python_interpreter="which python"`
+ - $ `ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter='which python'"`
  - Deploy Application using Fargate: 
- - $ `ansible-playbook deploy.yml -i inventory/development/ -e ansible_python_interpreter="which python"`
+ - $ `ansible-playbook deploy.yml -i inventory/development/ -e "ansible_python_interpreter='which python'"`
 
 ## Solution 3: Using traditional AMI + EC2  based deployment
 
