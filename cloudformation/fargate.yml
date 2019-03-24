@@ -19,9 +19,6 @@ Parameters:
   ContainerMemory:
     Type: Number
     Description: "The memory in megabytes to give the container"
-  Priority:
-    Type: Number
-    Description: "The priority for the routing rule added to the load balancer. This only applies if your have multiple services which have been assigned to different paths on the load balancer."
   DesiredCount:
     Type: Number
     Description: "The number of the service task to run"

@@ -24,6 +24,32 @@ Provide documentation:
   - $ `docker build -t simple-sinatra-app .`
   - $ `docker run -p 8080:80 simple-sinatra-app`
   - Use browser or $ `curl -i 127.0.0.1:8080`
+  
+## Deployment Design
+```
+                   +-----------------VPC-----10.0.0.0/21-------------------------------------------+
+                   |          +--------Security Group-------------------------------------------+  |
+                   |          |                                 +--public subnet one----------+ |  |
+                   |          |                                 |  10.0.0.0/23                | |  |
+                   |          |                                 | +------Security Group-----+ | |  |
+                   |          |                             +---+-+-->ENI<--->Fargate Task  | | |  |
+                   |          |                             |   | | public Ip               | | |  |
+                   |          |                             |   | | private IP              | | |  |
+                   |          |                             |   | +-------------------------+ | |  |
+                   |          |                             |   +-----------------------------+ |  |
+Internet<--->InternetGateway<-+->Application Load Balancer<-|                                   |  |
+                   |          |         public Ip           |   +--public subnet two----------+ |  |
+                   |          |                             |   |  10.0.2.0/23                | |  |
+                   |          |                             |   | +------Security Group-----+ | |  |
+                   |          |                             +---+-+-->ENI<--->Fargate Task  | | |  |
+                   |          |                                 | | public Ip               | | |  |
+                   |          |                                 | | private Ip              | | |  |
+                   |          |                                 | +-------------------------+ | |  |
+                   |          |                                 +-----------------------------+ |  |
+                   |          +-----------------------------------------------------------------+  |
+                   +-------------------------------------------------------------------------------+
+
+```
 
 ## Solution 1: Using Docker + AWS CLI + Fargate
 

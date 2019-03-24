@@ -35,7 +35,6 @@
         ContainerPort: "{{container_port}}"
         ContainerCpu: "{{container_cpu}}"
         ContainerMemory: "{{container_memory}}"
-        Priority: "{{priority}}"
         DesiredCount: "{{desired_count}}"
         Role: "{{role}}"
       tags:
