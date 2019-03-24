@@ -1,0 +1,4 @@
+steps:
+  -
+    label: "Create ECR, Build Image and Push to ECR"
+    command: ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"
