@@ -1,6 +1,3 @@
-# Language setting http://docs.shippable.com/ci/languages/node/
-language: ruby
-
 # use this to control what branches get built.
 # http://docs.shippable.com/ci/advancedOptions/branches/
 branches:
