@@ -15,6 +15,16 @@
         application: "{{application}}"
         environment: "{{env}}"
 
+  - name: Get ECR Login Session
+    command: "aws ecr get-login --no-include-email --region ap-southeast-2"
+    register: response
+
+  - name: Read Docker Login Command into Variable
+    set_fact:
+      response: "{{ response.stdout }}"
+
+  - name: Login to ECR
+    command: "{{ response }}"
 
   - name: Create simple-sinatra-app docker image and upload to ECR
     docker_image:
