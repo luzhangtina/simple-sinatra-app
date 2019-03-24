@@ -51,7 +51,7 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
 
 ```
 
-## Solution 1: Using Docker + AWS CLI + Fargate
+## Solution 1: Using Docker + AWS CLI + CloudFormation + Fargate
 
 ### Installing Dependencies (For Mac)
  - Install Docker 18.09.2(Download and Install https://download.docker.com/)
@@ -60,7 +60,7 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
  - Set AWS Credentials:   
    $ `source <creds-file>`
  
-### Create ECR Repository
+### Creating ECR Repository
   - Create and run Cloudformation template
     $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
@@ -71,28 +71,28 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
         ParameterKey=RepositoryName,ParameterValue='simple-sinatra-app-ecr-repo' \
         ParameterKey=AccountARNs,ParameterValue='arn:aws:iam::047371262158:root'`
         
-### Build Image and Push Image to ECR
+### Building Image and Pushing Image to ECR
   - $ `docker build -t simple-sinatra-app .`
   - $ `docker tag simple-sinatra-app:latest 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
   - $ Set Credentials or Session Keys(aws configure)
   - $ `$(aws ecr get-login --no-include-email --region ap-southeast-2)`
   - $ `docker push 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
 
-### Create Public VPC
+### Creating Public VPC
   - $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
     --template-body file://<project_path>/cloudformation/public-vpc-two-subnet.yml \
     --stack-name simple-sinatra-app-vpc \
     --capabilities CAPABILITY_IAM `
 
-### Deploy Using Fargate
+### Deploying by Using Fargate
   - $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
     --template-body file://<project_path>/cloudformation/fargate.yml \
     --stack-name ssa-on-fargate \
     --capabilities CAPABILITY_IAM `
     
-## Solution 2: Using Ansible + Docker + Fargate
+## Solution 2: Using Ansible + Docker + CloudFormation + Fargate
 
 ### Installing Dependencies for using Python Virtual Env and Ansible
  - Install Docker 18.09.2(Download and Install https://download.docker.com/)
@@ -104,7 +104,7 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
  - Set AWS Credentials: `source <creds-file>`
  - Set AWS account_id in /inventory/development/group_vars/all
 
-### Deploying Application Components on AWS
+### Deploying Application on AWS
  - $(aws ecr get-login --no-include-email --region ap-southeast-2)
  - Create ECR, Build Application Container, Upload to ECR:  
    $ ``ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
