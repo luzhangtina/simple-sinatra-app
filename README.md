@@ -1,4 +1,4 @@
-## TODO
+[![Run Status](https://api.shippable.com/projects/5c973d7a5142dd0007ec69ca/badge?branch=master)]()
 
 Provision a new application server and deploy the application in this Git repository
 ------------------------------------------------------------------------------------
