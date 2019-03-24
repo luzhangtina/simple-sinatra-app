@@ -1,0 +1,22 @@
+# Language setting http://docs.shippable.com/ci/languages/node/
+language: ruby
+
+# use this to control what branches get built.
+# http://docs.shippable.com/ci/advancedOptions/branches/
+branches:
+  only:
+    - master
+
+# using pre-defined build variables
+# full list http://docs.shippable.com/ci/advancedOptions/environmentVariables/
+env:
+  global:
+    - TEST=test
+
+build:
+
+  # http://docs.shippable.com/ci/shippableyml/#ci
+  ci:
+    # npm mirrors can sometimes be flacky, better to use shippable_retry
+    # http://docs.shippable.com/ci/advancedOptions/retry/
+    - ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"
