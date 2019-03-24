@@ -11,7 +11,9 @@ branches:
 # full list http://docs.shippable.com/ci/advancedOptions/environmentVariables/
 env:
   global:
-    - TEST=test
+    - AWS_DEFAULT_REGION=ap-southeast-2
+    - secure: HPVfo2Q+3bOAD1cH0ExdGYsfpzpHR9TXPvU4TpV3SA4pbm4tvZm0h47nKLoiosl8tZEdX17wBHkVxg5XDZzBabqg4VOEGYfojSvMa47oTK0ZAsl4KAJsM2oVslnF+YI6ILWo2jhtiuqalxrtzxP4H0wP5d8xxCFdp0WXo7jsg3/snEpSJHGumKyWAfaiDNcoYBMU4IphgpoGuz/HAo27+e5YpIDd/lPRDsg/LYP/PohhllvdJl/HfF6ilbruGe8wfH23sNPrioA/QQVRrhCQtvPzNvXgcgz3f/52lWLIOEwZr3LodPun6YRqk/RMNfNWRDdX+K54HRKW8eApamdAPw==
+    - secure: HHXrt8PTdNJFQGXV1OwTRF6DsES4dttLH42Dj/Ax7opwcCFf+cLZRZdpMAJM1cBGGINoqVFPZG/wsWYr/p9xeeRrvzl7b1GIQUchHRBVZh2oMywLTy5ruQRfYNJnpgCclJQXOELicHdqrTqE0gAywpBr2TVykCDju1ZsM9KDVeeOSD2qXqUaag5hlCG1sfQBEHso2MSjnO5Q0+P/5HEfsFhUWIrrh6+z19iGnaodWz2nfCtIFXs2+Bl+Yl38FBxSE0ZEIpLdBHDfHq8NMFk2hOFuWMzYuBBJei4x0g/SyGsPrCYjfIb/Ts/b2OjqF1U1zaz3pByNytRluM9mYcyDxg==
 
 build:
 
