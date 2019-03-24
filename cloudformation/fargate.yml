@@ -19,9 +19,6 @@ Parameters:
   ContainerMemory:
     Type: Number
     Description: "The memory in megabytes to give the container"
-  ALBPath:
-    Type: String
-    Description: "A path on the public load balancer that this service should be connected to. Use * to send all load balancer traffic to this service"
   Priority:
     Type: Number
     Description: "The priority for the routing rule added to the load balancer. This only applies if your have multiple services which have been assigned to different paths on the load balancer."
@@ -37,14 +34,6 @@ Conditions:
       - !Ref Role
       - ''
 Resources:
-  ECSCluster:
-    Type: 'AWS::ECS::Cluster'
-  FargateContainerSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupDescription: "Access to the Fargate containers"
-      VpcId:
-        Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
   PublicLoadBalancerSG:
       Type: 'AWS::EC2::SecurityGroup'
       Properties:
@@ -54,20 +43,7 @@ Resources:
         SecurityGroupIngress:
           - CidrIp: 0.0.0.0/0
             IpProtocol: -1
-  EcsSecurityGroupIngressFromPublicALB:
-    Type: 'AWS::EC2::SecurityGroupIngress'
-    Properties:
-      Description: "Ingress from the public ALB"
-      GroupId: !Ref FargateContainerSecurityGroup
-      IpProtocol: -1
-      SourceSecurityGroupId: !Ref PublicLoadBalancerSG
-  EcsSecurityGroupIngressFromSelf:
-    Type: 'AWS::EC2::SecurityGroupIngress'
-    Properties:
-      Description: "Ingress from other containers in the same security group"
-      GroupId: !Ref FargateContainerSecurityGroup
-      IpProtocol: -1
-      SourceSecurityGroupId: !Ref FargateContainerSecurityGroup
+
   PublicLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Properties:
@@ -80,6 +56,22 @@ Resources:
         - Fn::ImportValue: !Sub '${VPCStackName}:PublicSubnetTwo'
       SecurityGroups:
         - !Ref PublicLoadBalancerSG
+
+  TargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      TargetType: ip
+      Name: !Ref ServiceName
+      Port: !Ref ContainerPort
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId:
+        Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
   PublicLoadBalancerListener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     DependsOn:
@@ -91,6 +83,26 @@ Resources:
       LoadBalancerArn: !Ref PublicLoadBalancer
       Port: 80
       Protocol: HTTP
+
+  ECSCluster:
+    Type: 'AWS::ECS::Cluster'
+
+  FargateContainerSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: "Access to the Fargate containers"
+      VpcId:
+        Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
+  FargateContainerSecurityFromPublicALB:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      Description: "Ingress from the public ALB"
+      GroupId: !Ref FargateContainerSecurityGroup
+      FromPort: !Ref ContainerPort
+      IpProtocol: tcp
+      ToPort: !Ref ContainerPort
+      SourceSecurityGroupId: !Ref PublicLoadBalancerSG
+
   ECSTaskExecutionRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -137,43 +149,16 @@ Resources:
           Image: !Ref ImageUrl
           PortMappings:
             - ContainerPort: !Ref ContainerPort
-  TargetGroup:
-      Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
-      Properties:
-        HealthCheckIntervalSeconds: 6
-        HealthCheckPath: /
-        HealthCheckProtocol: HTTP
-        HealthCheckTimeoutSeconds: 5
-        HealthyThresholdCount: 2
-        TargetType: ip
-        Name: !Ref ServiceName
-        Port: !Ref ContainerPort
-        Protocol: HTTP
-        UnhealthyThresholdCount: 2
-        VpcId:
-          Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
-  LoadBalancerRule:
-    Type: 'AWS::ElasticLoadBalancingV2::ListenerRule'
-    Properties:
-      Actions:
-        - TargetGroupArn: !Ref TargetGroup
-          Type: forward
-      Conditions:
-        - Field: path-pattern
-          Values:
-            - !Ref ALBPath
-      ListenerArn: !Ref PublicLoadBalancerListener
-      Priority: !Ref Priority
   Service:
     Type: 'AWS::ECS::Service'
-    DependsOn: LoadBalancerRule
+    DependsOn: PublicLoadBalancerListener
     Properties:
       ServiceName: !Ref ServiceName
       Cluster: !Ref ECSCluster
       LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
-        MinimumHealthyPercent: 100
+        MinimumHealthyPercent: 75
       DesiredCount: !Ref DesiredCount
       NetworkConfiguration:
         AwsvpcConfiguration:

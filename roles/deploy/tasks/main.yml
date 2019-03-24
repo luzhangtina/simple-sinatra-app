@@ -30,12 +30,11 @@
       stack_policy: "cloudformation/allow_update_policy.json"
       template_parameters:
         VPCStackName: "{{application}}-{{env}}-vpc"
-        ServiceName: "{{application}}-{{deploy_version}}"
+        ServiceName: "{{application}}-{{env}}-{{deploy_version}}"
         ImageUrl: "{{account_id}}.dkr.ecr.{{aws_region}}.amazonaws.com/{{application}}-{{env}}:{{deploy_version}}"
         ContainerPort: "{{container_port}}"
         ContainerCpu: "{{container_cpu}}"
         ContainerMemory: "{{container_memory}}"
-        ALBPath: "{{alb_path}}"
         Priority: "{{priority}}"
         DesiredCount: "{{desired_count}}"
         Role: "{{role}}"
