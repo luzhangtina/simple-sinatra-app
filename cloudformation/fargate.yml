@@ -38,8 +38,10 @@ Resources:
         VpcId:
           Fn::ImportValue: !Sub '${VPCStackName}:VPCId'
         SecurityGroupIngress:
-          - CidrIp: 0.0.0.0/0
-            IpProtocol: -1
+          - IpProtocol: tcp
+            FromPort: '80'
+            ToPort: '80'
+            CidrIp: 0.0.0.0/0
 
   PublicLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
