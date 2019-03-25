@@ -60,13 +60,12 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
   - $ `docker build -t simple-sinatra-app .`
   - $ `docker tag simple-sinatra-app:latest 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
   - $ Set Credentials or Session Keys(aws configure)
-  - $ `$(aws ecr get-login --no-include-email --region ap-southeast-2)`
   - $ `docker push 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
 
 ### Creating Public VPC
   - $ `aws cloudformation create-stack \
     --region ap-southeast-2 \
-    --template-body file://<project_path>/cloudformation/public-vpc-two-subnet.yml \
+    --template-body file://<project_path>/cloudformation/vpc_and_two_public_subnets.yml \
     --stack-name simple-sinatra-app-vpc \
     --capabilities CAPABILITY_IAM `
 
@@ -90,13 +89,15 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
  - Set AWS account_id in /inventory/development/group_vars/all
 
 ### Deploying Application on AWS
- - $(aws ecr get-login --no-include-email --region ap-southeast-2)
  - Create ECR, Build Application Container, Upload to ECR:  
    $ ``ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
  - Deploy Application using Fargate: 
    $ ``ansible-playbook deploy.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
  - (Optional) Using one step operation to build and deploy Application using Fargate: 
    $ ``ansible-playbook build_and_deploy.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
+   
+### Building CI by Using Shippable 
+ - Any merge on github repository will trigger building and deployment on AWS automatically.
 
 ### Price
  - ECR: 
