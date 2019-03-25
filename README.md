@@ -1,20 +1,5 @@
 [![Run Status](https://api.shippable.com/projects/5c973d7a5142dd0007ec69ca/badge?branch=master)](https://luzhangtina.github.io/)
 
-Provision a new application server and deploy the application in this Git repository
-------------------------------------------------------------------------------------
-- Write configuration-as-code recipes (using your preferred orchestration software) to:
-  - Create the server (can be local VM or AWS based)
-  - Configure an OS image (your choice) appropriately.
-  - Deploy the provided application.
-  - Make the application available on port 80.
-  - Ensure that the server is locked down and secure.
-  
-Provide documentation:
-----------------------
-  - Instructions for the reviewer which explain how your code should be executed
-  - Requirements for running. (AWS account? Base images? Other tooling pre-installed?)
-  - Explanation of assumptions and design choices.
-
 ## Running Application directly on local environment
   - git clone git@github.com:luzhangtina/simple-sinatra-app.git
   - $ `./run-local.sh`
