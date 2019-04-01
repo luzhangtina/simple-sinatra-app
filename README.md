@@ -75,6 +75,15 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
     --template-body file://<project_path>/cloudformation/fargate.yml \
     --stack-name ssa-on-fargate \
     --capabilities CAPABILITY_IAM `
+
+### AutoScaling for Fargate
+  - $ `aws cloudformation create-stack \
+    --region ap-southeast-2 \
+    --template-body file://<project_path>/cloudformation/ecs_service_autoscaling.yml \
+    --stack-name ecs-service-autoscaling \
+    --capabilities CAPABILITY_IAM \
+    --parameters \
+            ParameterKey=FargateStackName,ParameterValue='ssa-on-fargate'`
     
 ## Solution 2: Using Ansible + Docker + CloudFormation + Fargate
 

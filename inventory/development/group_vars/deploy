@@ -6,5 +6,5 @@ public_subnet_four_cidr: 10.0.6.0/23
 container_port: 80
 container_cpu: 256
 container_memory: 512
-desired_count: 2
+desired_count: 1
 role: ""

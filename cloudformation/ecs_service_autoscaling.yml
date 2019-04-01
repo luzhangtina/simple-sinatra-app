@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'Set auto scaling function for ECS service'
+Parameters:
+  FargateStackName:
+    Type: String
+    Description: 'The name of the Fargate stack'
+Resources:
+  ECSAutoScalingRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          -
+            Effect: 'Allow'
+            Principal:
+              Service:
+                - 'application-autoscaling.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: 'ecs-service-auto-scaling'
+          PolicyDocument:
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - application-autoscaling:*
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:PutMetricAlarm
+                  - ecs:DescribeServices
+                  - ecs:UpdateService
+                Resource: '*'
+  ECSScalableTarget:
+    Type: 'AWS::ApplicationAutoScaling::ScalableTarget'
+    Properties:
+      MaxCapacity: 10
+      MinCapacity: 1
+      ResourceId: !Join
+          - '/'
+          - - service
+            - Fn::ImportValue: !Sub '${FargateStackName}:ECSClusterName'
+            - Fn::ImportValue: !Sub '${FargateStackName}:ECSServiceName'
+      RoleARN: !GetAtt ECSAutoScalingRole.Arn
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+  ServiceScalingUpPolicy:
+    Type: 'AWS::ApplicationAutoScaling::ScalingPolicy'
+    Properties:
+      PolicyName: ServiceScaleUpPolicy
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref 'ECSScalableTarget'
+      StepScalingPolicyConfiguration:
+        AdjustmentType: ChangeInCapacity
+        Cooldown: 300
+        MetricAggregationType: Average
+        StepAdjustments:
+          - MetricIntervalLowerBound: 0
+            ScalingAdjustment: 1
+  ECSCPUHighAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      EvaluationPeriods: 5
+      Statistic: Average
+      Threshold: 60
+      AlarmDescription: Alarm if CPU utilization if great than 60
+      Period: 60
+      AlarmActions:
+        - !Ref 'ServiceScalingUpPolicy'
+      Namespace: AWS/ECS
+      Dimensions:
+        - Name: ClusterName
+          Value:
+            Fn::ImportValue: !Sub '${FargateStackName}:ECSClusterName'
+        - Name: ServiceName
+          Value:
+            Fn::ImportValue: !Sub '${FargateStackName}:ECSServiceName'
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: CPUUtilization
+  ServiceScalingDownPolicy:
+    Type: 'AWS::ApplicationAutoScaling::ScalingPolicy'
+    Properties:
+      PolicyName: ServiceScaleDownPolicy
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref 'ECSScalableTarget'
+      StepScalingPolicyConfiguration:
+        AdjustmentType: ChangeInCapacity
+        Cooldown: 300
+        MetricAggregationType: Average
+        StepAdjustments:
+          - MetricIntervalUpperBound: 0
+            ScalingAdjustment: -1
+  ECSCPULowAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      EvaluationPeriods: 5
+      Statistic: Average
+      Threshold: 40
+      AlarmDescription: Alarm if CPU utilization if less than 40
+      Period: 60
+      AlarmActions:
+        - !Ref 'ServiceScalingDownPolicy'
+      Namespace: AWS/ECS
+      Dimensions:
+        - Name: ClusterName
+          Value:
+            Fn::ImportValue: !Sub '${FargateStackName}:ECSClusterName'
+        - Name: ServiceName
+          Value:
+            Fn::ImportValue: !Sub '${FargateStackName}:ECSServiceName'
+      ComparisonOperator: LessThanThreshold
+      MetricName: CPUUtilization

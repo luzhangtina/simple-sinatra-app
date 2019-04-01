@@ -173,32 +173,23 @@ Resources:
           ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref TargetGroup
 
-  ECSAutoScalingRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          -
-            Effect: "Allow"
-            Principal:
-              Service:
-                - "application-autoscaling.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      Path: /
-      Policies:
-        - PolicyName: "ecs-service-auto-scaling"
-          PolicyDocument:
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - application-autoscaling:*
-                  - cloudwatch:DescribeAlarms
-                  - cloudwatch:PutMetricAlarm
-                  - ecs:DescribeServices
-                  - ecs:UpdateService
-                Resource: "*"
-
 Outputs:
   DNS:
+    Description: ALB DNS
     Value: !GetAtt PublicLoadBalancer.DNSName
+  ECSClusterName:
+    Description: ECS cluster name
+    Value: !Ref ECSCluster
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - ECSClusterName
+  ECSServiceName:
+    Description: ECS service name
+    Value: !GetAtt Service.Name
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - ECSServiceName
