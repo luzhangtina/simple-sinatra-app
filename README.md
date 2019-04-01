@@ -100,7 +100,7 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
 ### Deploying Application on AWS
  - Create ECR, Build Application Container, Upload to ECR:  
    $ ``ansible-playbook build.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
- - Deploy Application using Fargate: 
+ - Deploy Application using Fargate with autoscaling: 
    $ ``ansible-playbook deploy.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
  - (Optional) Using one step operation to build and deploy Application using Fargate: 
    $ ``ansible-playbook build_and_deploy.yml -i inventory/development/ -e "ansible_python_interpreter=`which python`"``
