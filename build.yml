@@ -1,5 +1,5 @@
 ---
-- hosts: build_app
+- hosts: build
   connection: local
   gather_facts: False
   roles:
