@@ -54,13 +54,13 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
     --capabilities CAPABILITY_IAM \
     --parameters \
         ParameterKey=RepositoryName,ParameterValue='simple-sinatra-app-ecr-repo' \
-        ParameterKey=AccountARNs,ParameterValue='arn:aws:iam::047371262158:root'`
+        ParameterKey=AccountARNs,ParameterValue='arn:aws:iam::myaccountID:root'`
         
 ### Building Image and Pushing Image to ECR
   - $ `docker build -t simple-sinatra-app .`
-  - $ `docker tag simple-sinatra-app:latest 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
+  - $ `docker tag simple-sinatra-app:latest myaccountID.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
   - $ Set Credentials or Session Keys(aws configure)
-  - $ `docker push 047371262158.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
+  - $ `docker push myaccountID.dkr.ecr.ap-southeast-2.amazonaws.com/simple-sinatra-app-ecr-repo:latest`
 
 ### Creating Public VPC
   - $ `aws cloudformation create-stack \
