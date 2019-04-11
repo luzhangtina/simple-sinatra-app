@@ -1,0 +1,16 @@
+---
+  - name: Deploy autoscaling for service
+    cloudformation:
+      stack_name: "{{application}}-{{env}}-autoscaling"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/ecs_service_autoscaling.yml"
+      stack_policy: "cloudformation/allow_update_policy.json"
+      template_parameters:
+        FargateStackName: "{{application}}-{{env}}-fargate"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"
+        environment: "{{env}}"
+    tags: autoscaling

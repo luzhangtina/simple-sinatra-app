@@ -25,6 +25,12 @@ Parameters:
   Role:
     Type: String
     Description: "An IAM role to give the service's containers if the code within needs to access other AWS resources like S3 buckets, DynamoDB tables, etc"
+  LogGroupStackName:
+    Type: String
+    Description: "The name of the log group stack that you created. Necessary to locate and reference resources created by that stack"
+  AWSLogRegion:
+    Type: String
+    Description: "The region that the awslogs log driver should send your Docker logs"
 Conditions:
   HasCustomRole: !Not
     - !Equals
@@ -148,6 +154,13 @@ Resources:
           Image: !Ref ImageUrl
           PortMappings:
             - ContainerPort: !Ref ContainerPort
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+              awslogs-group:
+                Fn::ImportValue: !Sub '${LogGroupStackName}:ECSLogGroupName'
+              awslogs-region: !Ref AWSLogRegion
+              awslogs-stream-prefix: 'awslogs'
   Service:
     Type: 'AWS::ECS::Service'
     DependsOn: PublicLoadBalancerListener

@@ -8,3 +8,4 @@ container_cpu: 256
 container_memory: 512
 desired_count: 1
 role: ""
+log_retention_days: 1

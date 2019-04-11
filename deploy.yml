@@ -3,4 +3,7 @@
   connection: local
   gather_facts: False
   roles:
-    - deploy
+    - vpc
+    - log
+    - fargate
+    - autoscaling

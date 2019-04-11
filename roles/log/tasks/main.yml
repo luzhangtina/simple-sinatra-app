@@ -1,0 +1,16 @@
+---
+  - name: Create log group and forward logs to CloudWatch
+    cloudformation:
+      stack_name: "{{application}}-{{env}}-log-group"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/log_group.yml"
+      stack_policy: "cloudformation/allow_update_policy.json"
+      template_parameters:
+        LogRetentionDays: "{{log_retention_days}}"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"
+        environment: "{{env}}"
+    tags: log

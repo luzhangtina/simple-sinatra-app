@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Create log group and forward logs to CloudWatch"
+Parameters:
+  LogRetentionDays:
+    Type: Number
+    Description: "The number of days to retain the log events in the log group"
+Resources:
+  ECSLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      RetentionInDays: !Ref LogRetentionDays
+Outputs:
+  ECSLogGroupName:
+    Description: The logical ID of ECSLogGroup
+    Value: !Ref ECSLogGroup
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - ECSLogGroupName
