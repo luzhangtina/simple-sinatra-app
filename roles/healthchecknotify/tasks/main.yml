@@ -1,0 +1,17 @@
+---
+  - name: Create health check alarm and trigger SNS send email notification
+    cloudformation:
+      stack_name: "{{application}}-{{env}}-health-check-notify"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/health_check_notify.yml"
+      stack_policy: "cloudformation/allow_update_policy.json"
+      template_parameters:
+        EmailAddress: "{{email_address}}"
+        FargateStackName: "{{application}}-{{env}}-fargate"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"
+        environment: "{{env}}"
+    tags: healthchecknotify

@@ -9,3 +9,4 @@ container_memory: 512
 desired_count: 1
 role: ""
 log_retention_days: 1
+email_address: zhanglu.xidian@gmail.com

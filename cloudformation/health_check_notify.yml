@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Create Alarm for the failed health check and send notification to an email address"
+Parameters:
+  EmailAddress:
+    Type: String
+    Description: 'The Email address to be notified when the CloudWatch alarm is triggered'
+  FargateStackName:
+    Type: String
+    Description: 'The name of the Fargate stack'
+Resources:
+  HealthCheckFailedNotifyEmail:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: 'NotifyHealthCheckFailedViaEmail'
+      Subscription:
+        - Endpoint: !Ref EmailAddress
+          Protocol: 'email'
+  UnHealthContainerAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: 'Alarms when there is any unhealthy container'
+      AlarmActions:
+        - !Ref 'HealthCheckFailedNotifyEmail'
+      Namespace: 'AWS/ApplicationELB'
+      Dimensions:
+        - Name: 'LoadBalancer'
+          Value:
+            Fn::ImportValue: !Sub '${FargateStackName}:ALBFullName'
+        - Name: 'TargetGroup'
+          Value:
+            Fn::ImportValue: !Sub '${FargateStackName}:TargetGroupFullName'
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      MetricName: 'UnHealthyHostCount'
+      EvaluationPeriods: 1
+      Period: 60
+      Statistic: Maximum
+      Threshold: 1

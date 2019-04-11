@@ -65,7 +65,7 @@ Resources:
   TargetGroup:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
-      HealthCheckIntervalSeconds: 60
+      HealthCheckIntervalSeconds: 30
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 10
@@ -188,10 +188,26 @@ Resources:
 
 Outputs:
   DNS:
-    Description: ALB DNS
+    Description: 'ALB DNS'
     Value: !GetAtt PublicLoadBalancer.DNSName
+  ALBFullName:
+    Description: 'Application Load Balancer full name'
+    Value: !GetAtt PublicLoadBalancer.LoadBalancerFullName
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - ALBFullName
+  TargetGroupFullName:
+    Description: 'Target Group full name'
+    Value: !GetAtt TargetGroup.TargetGroupFullName
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - TargetGroupFullName
   ECSClusterName:
-    Description: ECS cluster name
+    Description: 'ECS cluster name'
     Value: !Ref ECSCluster
     Export:
       Name: !Join
@@ -199,7 +215,7 @@ Outputs:
         - - !Ref 'AWS::StackName'
           - ECSClusterName
   ECSServiceName:
-    Description: ECS service name
+    Description: 'ECS service name'
     Value: !GetAtt Service.Name
     Export:
       Name: !Join
