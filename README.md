@@ -116,4 +116,8 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
  - Fargate: 
    - Monthly Fargate compute charges = monthly CPU charges + monthly memory charges
 
+## Solution 3: Using Ansible + EC2 + AMI
 
+### Create AMI
+ - Launch an ec2 instance, install rvm, ruby, and git. Create AMI
+    $ ``ansible-playbook create_ami.yml -e "ansible_python_interpreter=`which python`"``
