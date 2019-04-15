@@ -120,4 +120,4 @@ Internet<--->InternetGateway<-+->Application Load Balancer<-|                   
 
 ### Create AMI
  - Launch an ec2 instance, install rvm, ruby, and git. Create AMI
-    $ ``ansible-playbook create_ami.yml -e "ansible_python_interpreter=`which python`"``
+    $ ``ansible-playbook deploy_classic_ec2.yml -e "ansible_python_interpreter=`which python`"``

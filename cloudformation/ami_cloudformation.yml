@@ -9,7 +9,6 @@ Parameters:
     Type: String
     Description: 'Instance type to launch EC2 instances.'
     Default: t2.micro
-    AllowedValues: [ t2.micro]
 Resources:
   # Completes when the instance is fully provisioned and ready for AMI creation.
   AMICreate:
@@ -175,4 +174,10 @@ Resources:
       Timeout: 300
 Outputs:
   AMI:
+    Description: 'EC2 AMI'
     Value: !Ref AMI
+    Export:
+      Name: !Join
+        - ':'
+        - - !Ref 'AWS::StackName'
+          - AMI

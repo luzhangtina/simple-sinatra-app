@@ -4,7 +4,4 @@
   gather_facts: False
   roles:
     - vpc
-    - log
-    - fargate
-    - ecsautoscaling
-    - healthchecknotify
+    - ami_cloudformation
