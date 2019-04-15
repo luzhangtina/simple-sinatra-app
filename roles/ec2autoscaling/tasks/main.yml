@@ -1,0 +1,17 @@
+---
+  - name: Create EC2 auto scaling group
+    cloudformation:
+      stack_name: "{{application}}-{{env}}-ec2-asg"
+      state: present
+      region: "{{aws_region}}"
+      disable_rollback: true
+      template: "cloudformation/ec2-autoscaling-group.yml"
+      stack_policy: "cloudformation/allow_update_policy.json"
+      template_parameters:
+        VPCStackName: "{{application}}-{{env}}-vpc"
+        AMIStackName: "{{application}}-{{env}}-ec2-ami"
+      tags:
+        project: "{{project}}"
+        application: "{{application}}"
+        environment: "{{env}}"
+    tags: ec2asg
